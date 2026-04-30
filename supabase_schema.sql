@@ -29,3 +29,16 @@ CREATE POLICY "Public Access" ON storage.objects FOR SELECT USING (bucket_id = '
 CREATE POLICY "Public Insert" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'items');
 CREATE POLICY "Public Delete" ON storage.objects FOR DELETE USING (bucket_id = 'items');
 CREATE POLICY "Public Update" ON storage.objects FOR UPDATE USING (bucket_id = 'items');
+
+-- 6. Create categories table
+CREATE TABLE IF NOT EXISTS categories (
+    name TEXT PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- 7. Enable RLS on categories
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+-- 8. Policy for categories
+CREATE POLICY "Enable all for anon on categories" ON categories FOR ALL USING (true) WITH CHECK (true);
+
