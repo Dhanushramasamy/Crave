@@ -4,13 +4,14 @@ import { Camera, PenTool, X, Check, Trash2, Undo } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CaptureModalProps {
-  onCapture: (data: { type: 'photo' | 'sketch', data: string }) => void;
+  onCapture: (data: { type: 'photo' | 'sketch' | 'text', data: string }) => void;
   onClose: () => void;
 }
 
 export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) {
-  const [activeTab, setActiveTab] = useState<'photo' | 'sketch'>('photo');
+  const [activeTab, setActiveTab] = useState<'photo' | 'sketch' | 'text'>('photo');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [textValue, setTextValue] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasDrawRef = useRef<any>(null);
 
@@ -46,6 +47,8 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
     } else if (activeTab === 'sketch' && canvasDrawRef.current) {
       const data = canvasDrawRef.current.getSaveData();
       onCapture({ type: 'sketch', data });
+    } else if (activeTab === 'text' && textValue.trim()) {
+      onCapture({ type: 'text', data: textValue.trim() });
     }
   };
 
@@ -71,8 +74,8 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
         {/* Header */}
         <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-sidebar">
           <div className="flex flex-col">
-            <h3 className="text-xl font-black italic tracking-tighter uppercase leading-none">CAPTURE<span className="text-accent underline">_SESSION</span></h3>
-            <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest mt-1">STATUS: BUFFERING RESOURCE...</span>
+            <h3 className="text-xl font-black italic tracking-tighter uppercase leading-none">ADD NEW<span className="text-accent underline"> ITEM</span></h3>
+            <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Ready to take a picture</span>
           </div>
           
           <div className="flex gap-4">
@@ -88,6 +91,12 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
                 className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'sketch' ? 'bg-accent text-black' : 'text-zinc-500 hover:text-zinc-300'}`}
               >
                 SKETCH
+              </button>
+              <button 
+                onClick={() => { setActiveTab('text'); setCapturedImage(null); }}
+                className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'text' ? 'bg-accent text-black' : 'text-zinc-500 hover:text-zinc-300'}`}
+              >
+                TEXT
               </button>
             </div>
             <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
@@ -106,11 +115,11 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
 
           {activeTab === 'photo' ? (
             capturedImage ? (
-              <img src={capturedImage} className="w-full h-full object-contain grayscale brightness-90 saturate-50" alt="Captured" />
+              <img src={capturedImage} className="w-full h-full object-contain" alt="Captured" />
             ) : (
-              <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover grayscale brightness-75 transition-all duration-1000" />
+              <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover transition-all duration-1000" />
             )
-          ) : (
+          ) : activeTab === 'sketch' ? (
             <div className="w-full h-full bg-zinc-50 cursor-crosshair">
               <CanvasDraw
                 ref={canvasDrawRef}
@@ -120,6 +129,15 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
                 canvasWidth={1200}
                 canvasHeight={800}
                 className="w-full h-full"
+              />
+            </div>
+          ) : (
+            <div className="w-full h-full bg-zinc-900 p-12">
+              <textarea 
+                value={textValue}
+                onChange={e => setTextValue(e.target.value)}
+                placeholder="Type your notes here..."
+                className="w-full h-full bg-transparent text-white text-3xl font-mono outline-none resize-none placeholder-zinc-700"
               />
             </div>
           )}
@@ -135,11 +153,12 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
               </button>
             )}
             
-            {(capturedImage || activeTab === 'sketch') && (
+            {(capturedImage || activeTab === 'sketch' || activeTab === 'text') && (
               <>
                 <button 
                   onClick={() => {
                     if (activeTab === 'sketch') canvasDrawRef.current?.clear();
+                    else if (activeTab === 'text') setTextValue('');
                     else setCapturedImage(null);
                   }}
                   className="px-8 py-4 bg-zinc-900 text-white border border-zinc-800 font-black text-xs uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-2 group"
@@ -158,15 +177,13 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
                   onClick={handleSave}
                   className="px-12 py-4 bg-accent text-black font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-3 shadow-[0_0_20px_rgba(204,255,0,0.3)]"
                 >
-                  <Check size={18} /> <span>Archive Resource</span>
+                  <Check size={18} /> <span>Save Item</span>
                 </button>
               </>
             )}
           </div>
           
           {/* Frame Decoration */}
-          <div className="absolute top-4 left-4 font-mono text-[8px] text-accent tracking-[5px] uppercase opacity-40 select-none">REC [RUNNING]</div>
-          <div className="absolute top-4 right-4 font-mono text-[8px] text-zinc-500 uppercase opacity-40 select-none">SCAN_MODE_V3.1</div>
           <div className="absolute bottom-4 left-4 h-12 w-12 border-l border-b border-accent opacity-20"></div>
           <div className="absolute bottom-4 right-4 h-12 w-12 border-r border-b border-accent opacity-20"></div>
         </div>
