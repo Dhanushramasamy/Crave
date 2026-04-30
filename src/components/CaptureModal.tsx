@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import CanvasDraw from 'react-canvas-draw';
-import { Camera, PenTool, X, Check, Trash2, Undo } from 'lucide-react';
+import { Camera, PenTool, X, Check, Trash2, Undo, SwitchCamera } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CaptureModalProps {
@@ -12,18 +12,31 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
   const [activeTab, setActiveTab] = useState<'photo' | 'sketch' | 'text'>('photo');
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [textValue, setTextValue] = useState('');
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasDrawRef = useRef<any>(null);
 
-  const startCamera = async () => {
+  const startCamera = async (currentFacingMode = facingMode) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: currentFacingMode } 
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
     } catch (err) {
       console.error("Error accessing camera:", err);
     }
+  };
+
+  const toggleCamera = () => {
+    const newMode = facingMode === 'environment' ? 'user' : 'environment';
+    setFacingMode(newMode);
+    startCamera(newMode);
   };
 
   const takePhoto = () => {
@@ -54,8 +67,18 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
 
   React.useEffect(() => {
     if (activeTab === 'photo' && !capturedImage) {
-      startCamera();
+      startCamera(facingMode);
+    } else if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
     }
+
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
   }, [activeTab, capturedImage]);
 
   return (
@@ -143,14 +166,24 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
           )}
           
           {/* Controls */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-6 z-20">
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-6 z-20 items-center">
             {activeTab === 'photo' && !capturedImage && (
-              <button 
-                onClick={takePhoto}
-                className="w-20 h-20 bg-white hover:bg-accent rounded-full border-8 border-black shadow-2xl flex items-center justify-center active:scale-90 transition-all group"
-              >
-                <div className="w-12 h-12 bg-black group-hover:bg-black rounded-full" />
-              </button>
+              <>
+                <button 
+                  onClick={toggleCamera}
+                  className="w-12 h-12 bg-zinc-900/80 backdrop-blur-md hover:bg-accent text-white hover:text-black rounded-full border border-zinc-800 flex items-center justify-center active:scale-90 transition-all"
+                  title="Flip Camera"
+                >
+                  <SwitchCamera size={20} />
+                </button>
+                <button 
+                  onClick={takePhoto}
+                  className="w-20 h-20 bg-white hover:bg-accent rounded-full border-8 border-black shadow-2xl flex items-center justify-center active:scale-90 transition-all group"
+                >
+                  <div className="w-12 h-12 bg-black group-hover:bg-black rounded-full" />
+                </button>
+                <div className="w-12 h-12" /> {/* Spacer to balance the layout */}
+              </>
             )}
             
             {(capturedImage || activeTab === 'sketch' || activeTab === 'text') && (

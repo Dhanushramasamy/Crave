@@ -29,6 +29,19 @@ export default function App() {
   React.useEffect(() => {
     async function loadData() {
       if (isSupabaseConfigured) {
+        const { data: catData, error: catError } = await supabase
+          .from('categories')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (catData && !catError) {
+          const fetchedRooms = catData.map(c => c.name);
+          if (fetchedRooms.length > 0) {
+            setRooms(fetchedRooms);
+            localStorage.setItem('userRooms', JSON.stringify(fetchedRooms));
+          }
+        }
+
         const { data, error } = await supabase
           .from('items')
           .select('*')
@@ -94,6 +107,16 @@ export default function App() {
 
     setItems(prevItems => [newItem, ...prevItems]);
     setIsAnalyzing(false);
+
+    // If Gemini suggested a new room, save it
+    if (activeRoom === 'All' && analysis.room && !rooms.includes(analysis.room)) {
+      const updatedRooms = [...rooms, analysis.room];
+      setRooms(updatedRooms);
+      localStorage.setItem('userRooms', JSON.stringify(updatedRooms));
+      if (isSupabaseConfigured) {
+        supabase.from('categories').insert([{ name: analysis.room }]).then();
+      }
+    }
 
     if (isSupabaseConfigured) {
       await supabase.from('items').insert([newItem]);
@@ -179,6 +202,9 @@ export default function App() {
                     const updated = rooms.filter(r => r !== room);
                     setRooms(updated);
                     localStorage.setItem('userRooms', JSON.stringify(updated));
+                    if (isSupabaseConfigured) {
+                      supabase.from('categories').delete().eq('name', room).then();
+                    }
                     if (activeRoom === room) setActiveRoom('All');
                   }}
                 />
@@ -197,11 +223,15 @@ export default function App() {
                 onChange={e => setNewRoomName(e.target.value)}
                 onKeyDown={e => {
                   if (e.key === 'Enter' && newRoomName.trim() && !rooms.includes(newRoomName.trim())) {
-                    const updated = [...rooms, newRoomName.trim()];
+                    const newName = newRoomName.trim();
+                    const updated = [...rooms, newName];
                     setRooms(updated);
                     localStorage.setItem('userRooms', JSON.stringify(updated));
                     setNewRoomName('');
                     setIsAddingRoom(false);
+                    if (isSupabaseConfigured) {
+                      supabase.from('categories').insert([{ name: newName }]).then();
+                    }
                   } else if (e.key === 'Escape') {
                     setIsAddingRoom(false);
                     setNewRoomName('');
@@ -249,7 +279,14 @@ export default function App() {
               <span>Viewing: Archive Grid</span>
             </div>
           </div>
-          
+          {activeRoom !== 'All' && (
+            <button 
+              onClick={() => setIsCaptureOpen(true)}
+              className="w-16 h-16 bg-accent text-black rounded-full shadow-[0_0_30px_rgba(204,255,0,0.3)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center shrink-0"
+            >
+              <Camera size={24} />
+            </button>
+          )}
         </header>
 
         {/* Status indicator for analysis */}
