@@ -1,0 +1,8 @@
+{
+  "name": "SpaceStyle Collector",
+  "description": "A visual companion to collect, categorize, and sketch inspiration for your home and office spaces.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
