@@ -29,16 +29,16 @@ export default function DetailsModal({ item, onUpdate, onDelete, onClose }: Deta
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/90 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-paper-white/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
     >
       <motion.div 
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="bg-sidebar w-full max-w-4xl border border-zinc-800 shadow-2xl flex flex-col md:flex-row overflow-hidden"
+        className="bg-fossil w-full max-w-4xl rounded-[16px] border border-pewter/20 shadow-2xl flex flex-col md:flex-row overflow-hidden"
         style={{ height: '80vh' }}
       >
         {/* Visual Preview */}
-        <div className="w-full md:w-1/2 bg-white flex items-center justify-center relative border-r border-zinc-800 overflow-hidden">
+        <div className="w-full md:w-1/2 bg-paper-white flex items-center justify-center relative border-r border-pewter/30 overflow-hidden">
           {item.type === 'photo' ? (
             <img src={item.image_url} className="w-full h-full object-contain" alt={item.name} />
           ) : (
@@ -54,17 +54,17 @@ export default function DetailsModal({ item, onUpdate, onDelete, onClose }: Deta
               />
             </div>
           )}
-          <div className="absolute top-4 left-4 font-mono text-[8px] text-black/50 uppercase tracking-[4px] z-10">Resource_Preview</div>
+          <div className="absolute top-6 left-6 text-caption font-medium text-dusty-ash uppercase tracking-wide z-10">Resource Preview</div>
         </div>
 
         {/* Content & Edit Form */}
-        <div className="flex-1 flex flex-col bg-sidebar overflow-y-auto">
-          <div className="p-8 border-b border-zinc-800 flex justify-between items-center bg-sidebar sticky top-0 z-10">
+        <div className="flex-1 flex flex-col bg-fossil overflow-y-auto">
+          <div className="p-8 border-b border-pewter/30 flex justify-between items-center bg-fossil sticky top-0 z-10">
             <div>
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase leading-none">EDIT<span className="text-accent underline">_ENTRY</span></h3>
-              <p className="text-[8px] font-mono text-zinc-500 uppercase mt-1">LAST SYNC: {new Date(item.created_at).toLocaleTimeString()}</p>
+              <h3 className="text-subheading font-medium tracking-tight uppercase leading-none text-midnight-ink">EDIT<span className="text-dusty-ash ml-2">ENTRY</span></h3>
+              <p className="text-caption text-dusty-ash uppercase tracking-wide mt-1">LAST SYNC: {new Date(item.created_at).toLocaleTimeString()}</p>
             </div>
-            <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+            <button onClick={onClose} className="p-2 text-dusty-ash hover:text-midnight-ink transition-colors">
               <X size={24} />
             </button>
           </div>
@@ -73,37 +73,37 @@ export default function DetailsModal({ item, onUpdate, onDelete, onClose }: Deta
             {/* Form Fields */}
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                  <Tag size={12} className="text-accent" /> Item Identity
+                <label className="text-caption font-medium text-dusty-ash uppercase tracking-wide flex items-center gap-2">
+                  <Tag size={14} className="text-midnight-ink" /> Item Identity
                 </label>
                 <input 
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full bg-zinc-900 border border-zinc-800 px-4 py-3 text-lg font-bold tracking-tight focus:border-accent outline-none transition-all uppercase italic"
+                  className="w-full bg-paper-white border border-pewter/30 px-4 py-3 text-body font-medium text-midnight-ink focus:border-midnight-ink outline-none transition-all rounded-[16px] uppercase"
                   placeholder="ITEM NAME"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                    <AlignLeft size={12} className="text-accent" /> Category
+                  <label className="text-caption font-medium text-dusty-ash uppercase tracking-wide flex items-center gap-2">
+                    <AlignLeft size={14} className="text-midnight-ink" /> Category
                   </label>
                   <input 
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full bg-zinc-900 border border-zinc-800 px-4 py-2 font-mono text-xs focus:border-accent outline-none transition-all uppercase"
+                    className="w-full bg-paper-white border border-pewter/30 px-4 py-3 text-body font-medium text-midnight-ink focus:border-midnight-ink outline-none transition-all rounded-[16px] uppercase"
                     placeholder="ENTER CATEGORY"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-                    <Home size={12} className="text-accent" /> Destination
+                  <label className="text-caption font-medium text-dusty-ash uppercase tracking-wide flex items-center gap-2">
+                    <Home size={14} className="text-midnight-ink" /> Destination
                   </label>
                   <select 
                     value={formData.room}
                     onChange={(e) => setFormData({ ...formData, room: e.target.value })}
-                    className="w-full bg-zinc-900 border border-zinc-800 px-4 py-2 font-mono text-xs focus:border-accent outline-none transition-all uppercase appearance-none"
+                    className="w-full bg-paper-white border border-pewter/30 px-4 py-3 text-body font-medium text-midnight-ink focus:border-midnight-ink outline-none transition-all rounded-[16px] uppercase appearance-none"
                   >
                     {ROOMS.filter(r => r !== 'All').map(room => (
                       <option key={room} value={room}>{room}</option>
@@ -112,13 +112,13 @@ export default function DetailsModal({ item, onUpdate, onDelete, onClose }: Deta
                 </div>
               </div>
 
-              <div className="space-y-2 text-zinc-100">
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Aesthetic Description</label>
+              <div className="space-y-2">
+                <label className="text-caption font-medium text-dusty-ash uppercase tracking-wide">Aesthetic Description</label>
                 <textarea 
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={4}
-                  className="w-full bg-zinc-900 border border-zinc-800 px-4 py-3 text-sm font-medium focus:border-accent outline-none transition-all resize-none"
+                  className="w-full bg-paper-white border border-pewter/30 px-4 py-3 text-body text-midnight-ink focus:border-midnight-ink outline-none transition-all resize-none rounded-[16px]"
                   placeholder="Describe the vibes..."
                 />
               </div>
@@ -126,18 +126,18 @@ export default function DetailsModal({ item, onUpdate, onDelete, onClose }: Deta
           </div>
 
           {/* Actions */}
-          <div className="p-8 border-t border-zinc-800 bg-sidebar flex gap-4 mt-auto sticky bottom-0 z-10">
+          <div className="p-8 border-t border-pewter/30 bg-fossil flex gap-4 mt-auto sticky bottom-0 z-10">
             <button 
               onClick={() => onDelete(item.id)}
-              className="flex-1 bg-zinc-900 text-zinc-500 border border-zinc-800 py-4 font-black text-[10px] uppercase tracking-widest hover:bg-red-950 hover:text-red-500 hover:border-red-500 transition-all flex items-center justify-center gap-2 group"
+              className="flex-1 bg-transparent text-midnight-ink border border-midnight-ink py-4 font-medium text-caption uppercase tracking-wide hover:bg-cardinal-red hover:text-paper-white hover:border-cardinal-red transition-all flex items-center justify-center gap-2 rounded-buttons group"
             >
-              <Trash2 size={14} /> PURGE ARCHIVE
+              <Trash2 size={16} /> PURGE ARCHIVE
             </button>
             <button 
               onClick={handleSave}
-              className="flex-[2] bg-accent text-black py-4 font-black text-[10px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(204,255,0,0.2)]"
+              className="flex-[2] bg-midnight-ink text-paper-white py-4 font-medium text-caption uppercase tracking-wide hover:bg-midnight-ink/90 active:scale-95 transition-all flex items-center justify-center gap-2 rounded-buttons shadow-sm"
             >
-              <Check size={14} /> COMMIT CHANGES
+              <Check size={16} /> COMMIT CHANGES
             </button>
           </div>
         </div>

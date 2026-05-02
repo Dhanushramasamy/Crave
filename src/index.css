@@ -1,17 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-  
-  --color-accent: #CCFF00;
-  --color-canvas: #050505;
-  --color-sidebar: #0A0A0A;
+  /* Colors */
+  --color-midnight-ink: #0D0D0D;
+  --color-paper-white: #FFFFFF;
+  --color-fossil: #F7F5F3;
+  --color-dusty-ash: #6E6A69;
+  --color-pewter: #9A9796;
+  --color-terracotta: #D1543;
+  --color-harvest-gold: #EAC7A0;
+  --color-cardinal-red: #BC361B;
+
+  /* Typography */
+  --font-cosmosoracle: 'cosmosOracle', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Typography — Scale */
+  --text-caption: 14px;
+  --leading-caption: 1.5;
+  --text-body: 16px;
+  --leading-body: 1.25;
+  --text-subheading: 24px;
+  --leading-subheading: 1.2;
+  --text-heading: 33px;
+  --leading-heading: 1.1;
+  --text-heading-lg: 38px;
+  --leading-heading-lg: 1.08;
+  --tracking-heading-lg: -0.418px;
+  --text-display: 74px;
+  --leading-display: 0.8;
+  --tracking-display: -0.74px;
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-72: 72px;
+  --spacing-200: 200px;
+
+  /* Border Radius */
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-2xl-2: 19px;
+  --radius-buttons: 16777216px;
 }
 
 @layer base {
   body {
-    @apply bg-canvas text-zinc-100 antialiased selection:bg-accent selection:text-black;
+    @apply bg-paper-white text-midnight-ink font-cosmosoracle font-normal antialiased selection:bg-fossil selection:text-midnight-ink;
   }
 }

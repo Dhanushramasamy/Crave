@@ -86,56 +86,50 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-paper-white/95 backdrop-blur-xl z-50 flex items-center justify-center p-4"
     >
       <motion.div 
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
-        className="bg-sidebar w-full max-w-4xl border border-zinc-800 shadow-2xl flex flex-col relative overflow-hidden"
+        className="bg-fossil w-full max-w-4xl rounded-[16px] shadow-2xl flex flex-col relative overflow-hidden"
         style={{ height: '85vh' }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-zinc-800 flex items-center justify-between bg-sidebar">
+        <div className="p-6 border-b border-pewter/30 flex items-center justify-between bg-paper-white">
           <div className="flex flex-col">
-            <h3 className="text-xl font-black italic tracking-tighter uppercase leading-none">ADD NEW<span className="text-accent underline"> ITEM</span></h3>
-            <span className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest mt-1">Ready to take a picture</span>
+            <h3 className="text-subheading font-medium tracking-tight uppercase leading-none text-midnight-ink">ADD NEW<span className="text-dusty-ash ml-2">ITEM</span></h3>
+            <span className="text-caption text-dusty-ash uppercase tracking-wide mt-1">Ready to capture</span>
           </div>
           
-          <div className="flex gap-4">
-             <div className="flex p-1 bg-zinc-900 border border-zinc-800">
+          <div className="flex gap-4 items-center">
+             <div className="flex p-1 bg-fossil rounded-buttons border border-pewter/30">
               <button 
                 onClick={() => { setActiveTab('photo'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'photo' ? 'bg-accent text-black' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'photo' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 SNAP
               </button>
               <button 
                 onClick={() => { setActiveTab('sketch'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'sketch' ? 'bg-accent text-black' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'sketch' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 SKETCH
               </button>
               <button 
                 onClick={() => { setActiveTab('text'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'text' ? 'bg-accent text-black' : 'text-zinc-500 hover:text-zinc-300'}`}
+                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'text' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 TEXT
               </button>
             </div>
-            <button onClick={onClose} className="p-2 text-zinc-500 hover:text-white transition-colors">
+            <button onClick={onClose} className="p-2 text-dusty-ash hover:text-midnight-ink transition-colors">
               <X size={24} />
             </button>
           </div>
         </div>
 
         {/* content area */}
-        <div className="flex-1 bg-black relative overflow-hidden flex items-center justify-center">
-          {/* Technical Grid Overlay */}
-          <div className="absolute inset-0 opacity-10 pointer-events-none z-10" style={{ 
-            backgroundImage: `linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)`,
-            backgroundSize: '40px 40px' 
-          }} />
-
+        <div className="flex-1 bg-fossil relative overflow-hidden flex items-center justify-center">
           {activeTab === 'photo' ? (
             capturedImage ? (
               <img src={capturedImage} className="w-full h-full object-contain" alt="Captured" />
@@ -143,10 +137,10 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
               <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover transition-all duration-1000" />
             )
           ) : activeTab === 'sketch' ? (
-            <div className="w-full h-full bg-zinc-50 cursor-crosshair">
+            <div className="w-full h-full bg-paper-white cursor-crosshair">
               <CanvasDraw
                 ref={canvasDrawRef}
-                brushColor="#000"
+                brushColor="#0D0D0D"
                 brushRadius={2}
                 lazyRadius={0}
                 canvasWidth={1200}
@@ -155,12 +149,12 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
               />
             </div>
           ) : (
-            <div className="w-full h-full bg-zinc-900 p-12">
+            <div className="w-full h-full bg-paper-white p-12">
               <textarea 
                 value={textValue}
                 onChange={e => setTextValue(e.target.value)}
                 placeholder="Type your notes here..."
-                className="w-full h-full bg-transparent text-white text-3xl font-mono outline-none resize-none placeholder-zinc-700"
+                className="w-full h-full bg-transparent text-midnight-ink text-heading font-medium outline-none resize-none placeholder-pewter"
               />
             </div>
           )}
@@ -171,54 +165,50 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
               <>
                 <button 
                   onClick={toggleCamera}
-                  className="w-12 h-12 bg-zinc-900/80 backdrop-blur-md hover:bg-accent text-white hover:text-black rounded-full border border-zinc-800 flex items-center justify-center active:scale-90 transition-all"
+                  className="w-12 h-12 bg-paper-white/80 backdrop-blur-md hover:bg-fossil text-midnight-ink rounded-full border border-fossil flex items-center justify-center active:scale-90 transition-all shadow-sm"
                   title="Flip Camera"
                 >
                   <SwitchCamera size={20} />
                 </button>
                 <button 
                   onClick={takePhoto}
-                  className="w-20 h-20 bg-white hover:bg-accent rounded-full border-8 border-black shadow-2xl flex items-center justify-center active:scale-90 transition-all group"
+                  className="w-20 h-20 bg-paper-white hover:bg-fossil rounded-full border-4 border-paper-white shadow-md flex items-center justify-center active:scale-90 transition-all group"
                 >
-                  <div className="w-12 h-12 bg-black group-hover:bg-black rounded-full" />
+                  <div className="w-16 h-16 bg-midnight-ink rounded-full" />
                 </button>
                 <div className="w-12 h-12" /> {/* Spacer to balance the layout */}
               </>
             )}
             
             {(capturedImage || activeTab === 'sketch' || activeTab === 'text') && (
-              <>
+              <div className="flex gap-4 p-2 bg-paper-white/90 backdrop-blur-md rounded-buttons border border-pewter/30 shadow-sm">
                 <button 
                   onClick={() => {
                     if (activeTab === 'sketch') canvasDrawRef.current?.clear();
                     else if (activeTab === 'text') setTextValue('');
                     else setCapturedImage(null);
                   }}
-                  className="px-8 py-4 bg-zinc-900 text-white border border-zinc-800 font-black text-xs uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-2 group"
+                  className="px-6 py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all flex items-center gap-2"
                 >
-                  <Trash2 size={16} /> <span>Discard</span>
+                  <Trash2 size={16} className="text-dusty-ash" /> <span>Discard</span>
                 </button>
                 {activeTab === 'sketch' && (
                   <button 
                     onClick={() => canvasDrawRef.current?.undo()}
-                    className="px-8 py-4 bg-zinc-900 text-white border border-zinc-800 font-black text-xs uppercase tracking-widest hover:bg-zinc-800 transition-all"
+                    className="px-6 py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all"
                   >
-                    <Undo size={16} />
+                    <Undo size={16} className="text-dusty-ash" />
                   </button>
                 )}
                 <button 
                   onClick={handleSave}
-                  className="px-12 py-4 bg-accent text-black font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all flex items-center gap-3 shadow-[0_0_20px_rgba(204,255,0,0.3)]"
+                  className="px-8 py-3 bg-midnight-ink text-paper-white font-medium text-caption uppercase tracking-wide rounded-buttons hover:bg-midnight-ink/90 active:scale-95 transition-all flex items-center gap-2 shadow-sm"
                 >
                   <Check size={18} /> <span>Save Item</span>
                 </button>
-              </>
+              </div>
             )}
           </div>
-          
-          {/* Frame Decoration */}
-          <div className="absolute bottom-4 left-4 h-12 w-12 border-l border-b border-accent opacity-20"></div>
-          <div className="absolute bottom-4 right-4 h-12 w-12 border-r border-b border-accent opacity-20"></div>
         </div>
       </motion.div>
     </motion.div>
