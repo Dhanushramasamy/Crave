@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import CanvasDraw from 'react-canvas-draw';
-import { Camera, PenTool, X, Check, Trash2, Undo, SwitchCamera } from 'lucide-react';
+import { Camera, PenTool, X, Check, Trash2, Undo, SwitchCamera, Upload } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface CaptureModalProps {
@@ -15,6 +15,7 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
   const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasDrawRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const startCamera = async (currentFacingMode = facingMode) => {
     try {
@@ -37,6 +38,17 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
     const newMode = facingMode === 'environment' ? 'user' : 'environment';
     setFacingMode(newMode);
     startCamera(newMode);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCapturedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const takePhoto = () => {
@@ -92,37 +104,42 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
         initial={{ scale: 0.9, y: 20 }}
         animate={{ scale: 1, y: 0 }}
         className="bg-fossil w-full max-w-4xl rounded-[16px] shadow-2xl flex flex-col relative overflow-hidden"
-        style={{ height: '85vh' }}
+        style={{ height: '90vh' }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-pewter/30 flex items-center justify-between bg-paper-white">
-          <div className="flex flex-col">
-            <h3 className="text-subheading font-medium tracking-tight uppercase leading-none text-midnight-ink">ADD NEW<span className="text-dusty-ash ml-2">ITEM</span></h3>
-            <span className="text-caption text-dusty-ash uppercase tracking-wide mt-1">Ready to capture</span>
+        <div className="p-4 md:p-6 border-b border-pewter/30 flex flex-col md:flex-row items-center justify-between bg-paper-white gap-4">
+          <div className="flex flex-row items-center w-full md:w-auto justify-between">
+            <div className="flex flex-col">
+              <h3 className="text-subheading font-medium tracking-tight uppercase leading-none text-midnight-ink">ADD NEW<span className="text-dusty-ash ml-2">ITEM</span></h3>
+              <span className="text-caption text-dusty-ash uppercase tracking-wide mt-1 hidden md:block">Ready to capture</span>
+            </div>
+            <button onClick={onClose} className="p-2 text-dusty-ash hover:text-midnight-ink transition-colors md:hidden">
+              <X size={24} />
+            </button>
           </div>
           
-          <div className="flex gap-4 items-center">
-             <div className="flex p-1 bg-fossil rounded-buttons border border-pewter/30">
+          <div className="flex w-full md:w-auto gap-4 items-center justify-between">
+             <div className="flex flex-1 md:flex-none p-1 bg-fossil rounded-buttons border border-pewter/30 w-full md:w-auto">
               <button 
                 onClick={() => { setActiveTab('photo'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'photo' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
+                className={`flex-1 md:flex-none px-3 md:px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'photo' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 SNAP
               </button>
               <button 
                 onClick={() => { setActiveTab('sketch'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'sketch' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
+                className={`flex-1 md:flex-none px-3 md:px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'sketch' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 SKETCH
               </button>
               <button 
                 onClick={() => { setActiveTab('text'); setCapturedImage(null); }}
-                className={`px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'text' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
+                className={`flex-1 md:flex-none px-3 md:px-6 py-2 text-caption font-medium uppercase tracking-wide rounded-buttons transition-all ${activeTab === 'text' ? 'bg-midnight-ink text-paper-white shadow-sm' : 'text-dusty-ash hover:text-midnight-ink'}`}
               >
                 TEXT
               </button>
             </div>
-            <button onClick={onClose} className="p-2 text-dusty-ash hover:text-midnight-ink transition-colors">
+            <button onClick={onClose} className="p-2 text-dusty-ash hover:text-midnight-ink transition-colors hidden md:block">
               <X size={24} />
             </button>
           </div>
@@ -160,49 +177,62 @@ export default function CaptureModal({ onCapture, onClose }: CaptureModalProps) 
           )}
           
           {/* Controls */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-6 z-20 items-center">
+          <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex gap-4 md:gap-6 z-20 items-center">
             {activeTab === 'photo' && !capturedImage && (
               <>
                 <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-10 h-10 md:w-12 md:h-12 bg-paper-white/80 backdrop-blur-md hover:bg-fossil text-midnight-ink rounded-full border border-fossil flex items-center justify-center active:scale-90 transition-all shadow-sm"
+                  title="Upload Photo"
+                >
+                  <Upload size={20} />
+                </button>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileUpload} 
+                  accept="image/*" 
+                  className="hidden" 
+                />
+                <button 
+                  onClick={takePhoto}
+                  className="w-16 h-16 md:w-20 md:h-20 bg-paper-white hover:bg-fossil rounded-full border-4 border-paper-white shadow-md flex items-center justify-center active:scale-90 transition-all group"
+                >
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-midnight-ink rounded-full" />
+                </button>
+                <button 
                   onClick={toggleCamera}
-                  className="w-12 h-12 bg-paper-white/80 backdrop-blur-md hover:bg-fossil text-midnight-ink rounded-full border border-fossil flex items-center justify-center active:scale-90 transition-all shadow-sm"
+                  className="w-10 h-10 md:w-12 md:h-12 bg-paper-white/80 backdrop-blur-md hover:bg-fossil text-midnight-ink rounded-full border border-fossil flex items-center justify-center active:scale-90 transition-all shadow-sm"
                   title="Flip Camera"
                 >
                   <SwitchCamera size={20} />
                 </button>
-                <button 
-                  onClick={takePhoto}
-                  className="w-20 h-20 bg-paper-white hover:bg-fossil rounded-full border-4 border-paper-white shadow-md flex items-center justify-center active:scale-90 transition-all group"
-                >
-                  <div className="w-16 h-16 bg-midnight-ink rounded-full" />
-                </button>
-                <div className="w-12 h-12" /> {/* Spacer to balance the layout */}
               </>
             )}
             
             {(capturedImage || activeTab === 'sketch' || activeTab === 'text') && (
-              <div className="flex gap-4 p-2 bg-paper-white/90 backdrop-blur-md rounded-buttons border border-pewter/30 shadow-sm">
+              <div className="flex gap-2 md:gap-4 p-2 bg-paper-white/90 backdrop-blur-md rounded-buttons border border-pewter/30 shadow-sm">
                 <button 
                   onClick={() => {
                     if (activeTab === 'sketch') canvasDrawRef.current?.clear();
                     else if (activeTab === 'text') setTextValue('');
                     else setCapturedImage(null);
                   }}
-                  className="px-6 py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all flex items-center gap-2"
+                  className="px-4 md:px-6 py-2 md:py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all flex items-center gap-2"
                 >
-                  <Trash2 size={16} className="text-dusty-ash" /> <span>Discard</span>
+                  <Trash2 size={16} className="text-dusty-ash" /> <span className="hidden sm:inline">Discard</span>
                 </button>
                 {activeTab === 'sketch' && (
                   <button 
                     onClick={() => canvasDrawRef.current?.undo()}
-                    className="px-6 py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all"
+                    className="px-4 md:px-6 py-2 md:py-3 bg-transparent text-midnight-ink font-medium text-caption uppercase tracking-wide hover:bg-fossil rounded-buttons transition-all"
                   >
                     <Undo size={16} className="text-dusty-ash" />
                   </button>
                 )}
                 <button 
                   onClick={handleSave}
-                  className="px-8 py-3 bg-midnight-ink text-paper-white font-medium text-caption uppercase tracking-wide rounded-buttons hover:bg-midnight-ink/90 active:scale-95 transition-all flex items-center gap-2 shadow-sm"
+                  className="px-6 md:px-8 py-2 md:py-3 bg-midnight-ink text-paper-white font-medium text-caption uppercase tracking-wide rounded-buttons hover:bg-midnight-ink/90 active:scale-95 transition-all flex items-center gap-2 shadow-sm"
                 >
                   <Check size={18} /> <span>Save Item</span>
                 </button>

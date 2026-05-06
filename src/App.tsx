@@ -268,12 +268,12 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col p-6 lg:p-12 lg:px-24 min-w-0 mb-10">
-        <header className="flex justify-between items-start mb-16">
+        <header className="flex flex-col md:flex-row justify-between items-start mb-16 gap-6 md:gap-0">
           <div>
-            <h2 className="text-display font-medium tracking-display leading-display mb-6 uppercase text-midnight-ink">
+            <h2 className="text-display font-medium tracking-display leading-display mb-6 uppercase text-midnight-ink break-words">
               {activeRoom}<br/><span className="text-pewter">SPACES</span>
             </h2>
-            <div className="flex gap-4 text-caption text-dusty-ash uppercase tracking-wide">
+            <div className="flex gap-4 text-caption text-dusty-ash uppercase tracking-wide flex-wrap">
               <span>Sorted by: Recency</span>
               <span>/</span>
               <span>Viewing: Archive Grid</span>
@@ -282,7 +282,7 @@ export default function App() {
           {activeRoom !== 'All' && (
             <button 
               onClick={() => setIsCaptureOpen(true)}
-              className="px-6 py-4 bg-paper-white border border-midnight-ink text-midnight-ink rounded-buttons hover:bg-fossil active:scale-95 transition-all flex items-center justify-center shrink-0 gap-2 font-medium"
+              className="w-full md:w-auto px-6 py-4 bg-paper-white border border-midnight-ink text-midnight-ink rounded-buttons hover:bg-fossil active:scale-95 transition-all flex items-center justify-center shrink-0 gap-2 font-medium"
             >
               <Camera size={20} />
               <span>Capture</span>
